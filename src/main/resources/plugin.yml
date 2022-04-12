@@ -1,5 +1,5 @@
 name: ServerUtils
 version: '${project.version}'
-main: com.mittenmc.serverutils.ServerUtils
+main: com.github.mittenmc.serverutils.ServerUtils
 authors: [ GavvyDizzle ]
 description: Server utilities for MittenMC
