@@ -27,7 +27,7 @@ public class PlayerSkull {
      * @param uuid The player's uuid
      * @return The default player skull for this user
      */
-    private static ItemStack getHead(UUID uuid) {
+    public static ItemStack getHead(UUID uuid) {
         if (uuid == null) {
             return new ItemStack(Material.AIR);
         }
@@ -59,7 +59,7 @@ public class PlayerSkull {
      * @param displayName The name of this item
      * @return The default player skull for this user
      */
-    private static ItemStack getHead(UUID uuid, String displayName) {
+    public static ItemStack getHead(UUID uuid, String displayName) {
         ItemStack skull =  getHead(uuid);
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
@@ -79,7 +79,7 @@ public class PlayerSkull {
      * @param lore The lore to add to this item
      * @return The default player skull for this user
      */
-    private static ItemStack getHead(UUID uuid, String displayName, ArrayList<String> lore) {
+    public static ItemStack getHead(UUID uuid, String displayName, ArrayList<String> lore) {
         ItemStack skull = getHead(uuid);
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
@@ -101,7 +101,7 @@ public class PlayerSkull {
      * @param player The OfflinePlayer
      * @return The default player skull for this user
      */
-    private static ItemStack getHead(OfflinePlayer player) {
+    public static ItemStack getHead(OfflinePlayer player) {
         if (player == null) {
             return new ItemStack(Material.AIR);
         }
@@ -118,7 +118,7 @@ public class PlayerSkull {
      * @param displayName The name of this item
      * @return The default player skull for this user
      */
-    private static ItemStack getHead(OfflinePlayer player, String displayName) {
+    public static ItemStack getHead(OfflinePlayer player, String displayName) {
         if (player == null) {
             return new ItemStack(Material.AIR);
         }
@@ -142,7 +142,7 @@ public class PlayerSkull {
      * @param lore The lore to add to this item
      * @return The default player skull for this user
      */
-    private static ItemStack getHead(OfflinePlayer player, String displayName, ArrayList<String> lore) {
+    public static ItemStack getHead(OfflinePlayer player, String displayName, ArrayList<String> lore) {
         if (player == null) {
             return new ItemStack(Material.AIR);
         }
