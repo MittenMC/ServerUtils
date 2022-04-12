@@ -20,6 +20,68 @@ public class PlayerSkull {
     }
 
     /**
+     * Determines if this player's head is currently cached.
+     *
+     * @param uuid The player's uuid.
+     * @return True if the player is cached.
+     */
+    public static boolean isCached(UUID uuid) {
+        return skullCache.containsKey(uuid);
+    }
+
+    /**
+     * Gets the cached head of a player.
+     * Plugins should verify that {@link PlayerSkull#isCached(UUID)} returns true before calling this method.
+     *
+     * @param uuid The player's uuid.
+     * @return The player's skull, null if one is not cached.
+     */
+    public static ItemStack getCachedHead(UUID uuid) {
+        return skullCache.get(uuid).clone();
+    }
+
+    /**
+     * Gets the cached head of a player.
+     * Plugins should verify that {@link PlayerSkull#isCached(UUID)} returns true before calling this method.
+     *
+     * @param uuid The player's uuid
+     * @param displayName The name of this item
+     * @return The player's skull, null if one is not cached.
+     */
+    public static ItemStack getCachedHead(UUID uuid, String displayName) {
+        ItemStack skull = skullCache.get(uuid).clone();
+
+        SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        sm.setDisplayName(Colors.conv(displayName));
+        skull.setItemMeta(sm);
+
+        return skull;
+    }
+
+    /**
+     * Gets the cached head of a player.
+     * Plugins should verify that {@link PlayerSkull#isCached(UUID)} returns true before calling this method.
+     *
+     * @param uuid The player's uuid
+     * @param displayName The name of this item
+     * @param lore The lore to add to this item
+     * @return The player's skull, null if one is not cached.
+     */
+    public static ItemStack getCachedHead(UUID uuid, String displayName, ArrayList<String> lore) {
+        ItemStack skull = skullCache.get(uuid).clone();
+
+        SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        sm.setDisplayName(Colors.conv(displayName));
+        for (int i = 0; i < lore.size(); i++) {
+            lore.set(i, Colors.conv(lore.get(i)));
+        }
+        sm.setLore(lore);
+        skull.setItemMeta(sm);
+
+        return skull;
+    }
+
+    /**
      * Gets a player skull from UUID.
      * This method should be run inside an asynchronous task.
      * If the uuid is null or if this player has never played before then an AIR ItemStack will be returned!
@@ -33,7 +95,7 @@ public class PlayerSkull {
         }
 
         if (skullCache.containsKey(uuid)) {
-            return skullCache.get(uuid);
+            return skullCache.get(uuid).clone();
         }
 
         ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
@@ -45,7 +107,7 @@ public class PlayerSkull {
         }
 
         skull.setItemMeta(sm);
-        skullCache.put(uuid, skull);
+        skullCache.put(uuid, skull.clone());
 
         return skull;
     }
@@ -60,7 +122,7 @@ public class PlayerSkull {
      * @return The default player skull for this user
      */
     public static ItemStack getHead(UUID uuid, String displayName) {
-        ItemStack skull =  getHead(uuid);
+        ItemStack skull = getHead(uuid);
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
         sm.setDisplayName(Colors.conv(displayName));
