@@ -1,4 +1,4 @@
-package com.mittenmc.serverutils;
+package com.github.mittenmc.serverutils;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;

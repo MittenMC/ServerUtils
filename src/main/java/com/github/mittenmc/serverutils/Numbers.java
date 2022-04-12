@@ -1,4 +1,4 @@
-package com.mittenmc.serverutils;
+package com.github.mittenmc.serverutils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

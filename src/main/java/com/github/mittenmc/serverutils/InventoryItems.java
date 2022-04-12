@@ -1,4 +1,4 @@
-package com.mittenmc.serverutils;
+package com.github.mittenmc.serverutils;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
