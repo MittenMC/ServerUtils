@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerSkull {
+public class PlayerHeads {
 
     private static final HashMap<UUID, ItemStack> skullCache;
 
@@ -31,7 +31,7 @@ public class PlayerSkull {
 
     /**
      * Gets the cached head of a player.
-     * Plugins should verify that {@link PlayerSkull#isCached(UUID)} returns true before calling this method.
+     * Plugins should verify that {@link PlayerHeads#isCached(UUID)} returns true before calling this method.
      *
      * @param uuid The player's uuid.
      * @return The player's skull, null if one is not cached.
@@ -42,7 +42,7 @@ public class PlayerSkull {
 
     /**
      * Gets the cached head of a player.
-     * Plugins should verify that {@link PlayerSkull#isCached(UUID)} returns true before calling this method.
+     * Plugins should verify that {@link PlayerHeads#isCached(UUID)} returns true before calling this method.
      *
      * @param uuid The player's uuid
      * @param displayName The name of this item
@@ -60,7 +60,7 @@ public class PlayerSkull {
 
     /**
      * Gets the cached head of a player.
-     * Plugins should verify that {@link PlayerSkull#isCached(UUID)} returns true before calling this method.
+     * Plugins should verify that {@link PlayerHeads#isCached(UUID)} returns true before calling this method.
      *
      * @param uuid The player's uuid
      * @param displayName The name of this item
