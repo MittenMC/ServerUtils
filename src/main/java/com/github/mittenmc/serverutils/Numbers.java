@@ -78,6 +78,49 @@ public class Numbers {
     }
 
     /**
+     * Gets the time in seconds formatted like 1d 4h 12m 13s.
+     * @param seconds The time in seconds to convert
+     * @return The time formatted to years/days/hours/mins/secs. "None" if seconds is negative
+     */
+    public static String getTimeFormatted(int seconds) {
+        if (seconds < 0) {
+            return "None";
+        }
+
+        int years = seconds / 31536000;
+        int days = (seconds % 31536000) / 86400;
+        int hours = (seconds % 86400) / 3600;
+        int mins = (seconds % 3600) / 60;
+        int secs = seconds % 60;
+
+        String time = "";
+        if (years != 0) time += years + "y ";
+        if (days != 0) time += days + "d ";
+        if (hours != 0) time += hours + "h ";
+        if (mins != 0) time += mins + "m ";
+        if (secs != 0) time += secs + "s";
+
+        return time.trim();
+    }
+
+    /**
+     * Gets the number nicely formatted to a power of 1,000.
+     * Most numbers will be formatted with two decimal places and up to 3 numbers before the decimal.
+     * e.g. 10,234,567 -> 10.23M
+     * The valid powers are none(<1000^1) k(<1000^2) M(<1000^3) B(<1000^4) T(<1000^5) q(<1000^6) Q(<1000^7)
+     *
+     * @param count The number to add a suffix to.
+     * @return The number with the appropriate suffix.
+     */
+    public static String withSuffix(long count) {
+        if (count < 1000L) {
+            return "" + count;
+        }
+        int exp = (int)(Math.log(count) / Math.log(1000.0));
+        return String.format("%.2f%c", count / Math.pow(1000.0, exp), "kMBTqQ".charAt(exp - 1));
+    }
+
+    /**
      * Evaluates a mathematical expression.
      * Handles the four basic operations, + - * /,
      * parenthesis, exponents ^ , sqrt,
