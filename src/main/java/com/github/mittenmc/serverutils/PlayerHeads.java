@@ -3,7 +3,6 @@ package com.github.mittenmc.serverutils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.SkullType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -52,6 +51,7 @@ public class PlayerHeads {
         ItemStack skull = skullCache.get(uuid).clone();
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setDisplayName(Colors.conv(displayName));
         skull.setItemMeta(sm);
 
@@ -71,6 +71,7 @@ public class PlayerHeads {
         ItemStack skull = skullCache.get(uuid).clone();
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setDisplayName(Colors.conv(displayName));
         for (int i = 0; i < lore.size(); i++) {
             lore.set(i, Colors.conv(lore.get(i)));
@@ -98,8 +99,9 @@ public class PlayerHeads {
             return skullCache.get(uuid).clone();
         }
 
-        ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
 
         if (!sm.hasOwner()) {
@@ -125,6 +127,7 @@ public class PlayerHeads {
         ItemStack skull = getHead(uuid);
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setDisplayName(Colors.conv(displayName));
         skull.setItemMeta(sm);
 
@@ -145,6 +148,7 @@ public class PlayerHeads {
         ItemStack skull = getHead(uuid);
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setDisplayName(Colors.conv(displayName));
         for (int i = 0; i < lore.size(); i++) {
             lore.set(i, Colors.conv(lore.get(i)));
@@ -188,6 +192,7 @@ public class PlayerHeads {
         ItemStack skull = getHead(player.getUniqueId());
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setDisplayName(Colors.conv(displayName));
         skull.setItemMeta(sm);
 
@@ -212,6 +217,7 @@ public class PlayerHeads {
         ItemStack skull = getHead(player.getUniqueId());
 
         SkullMeta sm = (SkullMeta) skull.getItemMeta();
+        assert sm != null;
         sm.setDisplayName(Colors.conv(displayName));
         for (int i = 0; i < lore.size(); i++) {
             lore.set(i, Colors.conv(lore.get(i)));

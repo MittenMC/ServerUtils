@@ -6,27 +6,28 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public enum ColoredItems {
 
-    RED(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)),
-    ORANGE(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1)),
-    YELLOW(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 4)),
-    LIME(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5)),
-    GREEN(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 13)),
-    CYAN(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 9)),
-    LIGHT_BLUE(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3)),
-    BLUE(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 11)),
-    PURPLE(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 10)),
-    MAGENTA(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 2)),
-    PINK(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 6)),
-    LIGHT_GRAY(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)),
-    GRAY(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)),
-    WHITE(new ItemStack(Material.STAINED_GLASS_PANE)),
-    BLACK(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)),
-    BROWN(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 12));
+    RED(new ItemStack(Material.RED_STAINED_GLASS_PANE)),
+    ORANGE(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE)),
+    YELLOW(new ItemStack(Material.YELLOW_STAINED_GLASS_PANE)),
+    LIME(new ItemStack(Material.LIME_STAINED_GLASS_PANE)),
+    GREEN(new ItemStack(Material.GREEN_STAINED_GLASS_PANE)),
+    CYAN(new ItemStack(Material.CYAN_STAINED_GLASS_PANE)),
+    LIGHT_BLUE(new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE)),
+    BLUE(new ItemStack(Material.BLUE_STAINED_GLASS_PANE)),
+    PURPLE(new ItemStack(Material.PURPLE_STAINED_GLASS_PANE)),
+    MAGENTA(new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE)),
+    PINK(new ItemStack(Material.PINK_STAINED_GLASS_PANE)),
+    LIGHT_GRAY(new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE)),
+    GRAY(new ItemStack(Material.GRAY_STAINED_GLASS_PANE)),
+    WHITE(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)),
+    BLACK(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+    BROWN(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
 
     private final ItemStack glass;
 
     ColoredItems(ItemStack glass) {
         ItemMeta meta = glass.getItemMeta();
+        assert meta != null;
         meta.setDisplayName(" ");
         glass.setItemMeta(meta);
         this.glass = glass;
@@ -48,6 +49,7 @@ public enum ColoredItems {
     public ItemStack getGlass(String displayName) {
         ItemStack glass = this.getGlass();
         ItemMeta meta = glass.getItemMeta();
+        assert meta != null;
         meta.setDisplayName(Colors.conv(displayName));
         glass.setItemMeta(meta);
 
