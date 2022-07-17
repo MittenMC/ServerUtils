@@ -29,8 +29,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Contains methods for converting ItemStacks to and from a byte[] array for persistent item storage.
+ * @author Exo-Network
+ * @version 1.0
+ * @since 1.0
+ */
 public class ItemStackSerializer {
 
+    /**
+     * Converts an ItemStack to a byte array
+     * @param item The ItemStack
+     * @return The byte array representing this item
+     * @throws SerializationException Thrown when serialization fails
+     * @since 1.0
+     */
     public static byte[] serializeItemStack(ItemStack item) throws SerializationException {
         try {
             @Cleanup ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -42,6 +55,13 @@ public class ItemStackSerializer {
         }
     }
 
+    /**
+     * Converts a byte array to an ItemStack.
+     * @param b The byte array
+     * @return The ItemStack representing this byte array
+     * @throws SerializationException Thrown when serialization fails
+     * @since 1.0
+     */
     public static ItemStack deserializeItemStack(byte[] b) throws SerializationException {
         try {
             @Cleanup ByteArrayInputStream bais = new ByteArrayInputStream(b);

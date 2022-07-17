@@ -3,6 +3,13 @@ package com.github.mittenmc.serverutils;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+/**
+ * Contains methods for converting UUIDs to and from a byte[] array for persistent storage.
+ * See {@link <a href="https://github.com/RainbowDashLabs/BasicSQLPlugin">...</a>}
+ * @author RainbowDashLabs
+ * @version 1.0
+ * @since 1.0
+ */
 public class UUIDConverter {
 
     /**
@@ -10,6 +17,7 @@ public class UUIDConverter {
      *
      * @param uuid The uuid to convert.
      * @return The uuid as a byte[16].
+     * @since 1.0
      */
     public static byte[] convert(UUID uuid) {
         return ByteBuffer.wrap(new byte[16])
@@ -23,6 +31,7 @@ public class UUIDConverter {
      *
      * @param bytes The byte array to convert.
      * @return The byte array as a UUID.
+     * @since 1.0
      */
     public static UUID convert(byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);

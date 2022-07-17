@@ -5,25 +5,35 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+/**
+ * Implementation for a SubCommand which represents a command unique in its first argument.
+ * @author GavvyDizzle
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class SubCommand {
 
     /**
      * @return The name of the subcommand
+     * @since 1.0
      */
     public abstract String getName();
 
     /**
      * @return A short explanation of what this command does
+     * @since 1.0
      */
     public abstract String getDescription();
 
     /**
      * @return The command usage
+     * @since 1.0
      */
     public abstract String getSyntax();
 
     /**
      * @return The command usage with colors
+     * @since 1.0
      */
     public abstract String getColoredSyntax();
 
@@ -32,6 +42,7 @@ public abstract class SubCommand {
      *
      * @param sender The sender of the command
      * @param args The arguments of the command
+     * @since 1.0
      */
     public abstract void perform(CommandSender sender, String[] args);
 
@@ -41,6 +52,7 @@ public abstract class SubCommand {
      * @param player The player
      * @param args Whole arguments array
      * @return A String list of suggested responses
+     * @since 1.0
      */
     public abstract List<String> getSubcommandArguments(Player player, String[] args);
 

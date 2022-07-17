@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Contains useful methods for getting player heads.
+ * After being retrieved once, a head is cached.
+ * @author GavvyDizzle
+ * @version 1.0
+ * @since 1.0
+ */
 public class PlayerHeads {
 
     private static final HashMap<UUID, ItemStack> skullCache;
@@ -23,6 +30,7 @@ public class PlayerHeads {
      *
      * @param uuid The player's uuid.
      * @return True if the player is cached.
+     * @since 1.0
      */
     public static boolean isCached(UUID uuid) {
         return skullCache.containsKey(uuid);
@@ -34,6 +42,7 @@ public class PlayerHeads {
      *
      * @param uuid The player's uuid.
      * @return The player's skull, null if one is not cached.
+     * @since 1.0
      */
     public static ItemStack getCachedHead(UUID uuid) {
         return skullCache.get(uuid).clone();
@@ -46,6 +55,7 @@ public class PlayerHeads {
      * @param uuid The player's uuid
      * @param displayName The name of this item
      * @return The player's skull, null if one is not cached.
+     * @since 1.0
      */
     public static ItemStack getCachedHead(UUID uuid, String displayName) {
         ItemStack skull = skullCache.get(uuid).clone();
@@ -66,6 +76,7 @@ public class PlayerHeads {
      * @param displayName The name of this item
      * @param lore The lore to add to this item
      * @return The player's skull, null if one is not cached.
+     * @since 1.0
      */
     public static ItemStack getCachedHead(UUID uuid, String displayName, ArrayList<String> lore) {
         ItemStack skull = skullCache.get(uuid).clone();
@@ -89,6 +100,7 @@ public class PlayerHeads {
      *
      * @param uuid The player's uuid
      * @return The default player skull for this user
+     * @since 1.0
      */
     public static ItemStack getHead(UUID uuid) {
         if (uuid == null) {
@@ -122,6 +134,7 @@ public class PlayerHeads {
      * @param uuid The player's uuid
      * @param displayName The name of this item
      * @return The default player skull for this user
+     * @since 1.0
      */
     public static ItemStack getHead(UUID uuid, String displayName) {
         ItemStack skull = getHead(uuid);
@@ -143,6 +156,7 @@ public class PlayerHeads {
      * @param displayName The name of this item
      * @param lore The lore to add to this item
      * @return The default player skull for this user
+     * @since 1.0
      */
     public static ItemStack getHead(UUID uuid, String displayName, ArrayList<String> lore) {
         ItemStack skull = getHead(uuid);
@@ -166,6 +180,7 @@ public class PlayerHeads {
      *
      * @param player The OfflinePlayer
      * @return The default player skull for this user
+     * @since 1.0
      */
     public static ItemStack getHead(OfflinePlayer player) {
         if (player == null) {
@@ -183,6 +198,7 @@ public class PlayerHeads {
      * @param player The OfflinePlayer
      * @param displayName The name of this item
      * @return The default player skull for this user
+     * @since 1.0
      */
     public static ItemStack getHead(OfflinePlayer player, String displayName) {
         if (player == null) {
@@ -208,6 +224,7 @@ public class PlayerHeads {
      * @param displayName The name of this item
      * @param lore The lore to add to this item
      * @return The default player skull for this user
+     * @since 1.0
      */
     public static ItemStack getHead(OfflinePlayer player, String displayName, ArrayList<String> lore) {
         if (player == null) {

@@ -3,6 +3,12 @@ package com.github.mittenmc.serverutils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Creates a cancellable Repeating task using Bukkit's #scheduleSyncRepeatingTask().
+ * @author Orange-Tabby
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class RepeatingTask implements Runnable {
 
     private final int taskId;

@@ -4,6 +4,12 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * Contains all glass pane colors for easy use as inventory fillers.
+ * @author GavvyDizzle
+ * @version 1.0
+ * @since 1.0
+ */
 public enum ColoredItems {
 
     RED(new ItemStack(Material.RED_STAINED_GLASS_PANE)),
@@ -35,6 +41,7 @@ public enum ColoredItems {
 
     /**
      * @return A glass pane of this color with no name
+     * @since 1.0
      */
     public ItemStack getGlass() {
         return glass.clone();
@@ -45,6 +52,7 @@ public enum ColoredItems {
      *
      * @param displayName The name to give the glass
      * @return The glass pane of this color
+     * @since 1.0
      */
     public ItemStack getGlass(String displayName) {
         ItemStack glass = this.getGlass();
@@ -61,6 +69,7 @@ public enum ColoredItems {
      *
      * @param color The color glass
      * @return The colored glass if it exists, otherwise AIR
+     * @since 1.0
      */
     public static ItemStack getGlassByName(String color) {
         try {

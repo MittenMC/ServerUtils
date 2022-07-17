@@ -1,5 +1,6 @@
 name: ServerUtils
 version: '${project.version}'
+api-version: 1.18
 main: com.github.mittenmc.serverutils.ServerUtils
 authors: [ GavvyDizzle ]
 description: Server utilities for MittenMC

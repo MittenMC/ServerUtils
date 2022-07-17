@@ -2,6 +2,12 @@ package com.github.mittenmc.serverutils;
 
 import org.bukkit.Bukkit;
 
+/**
+ * Given two numbers, this class allows for easy random number generation within their range
+ * @author GavvyDizzle
+ * @version 1.0
+ * @since 1.0
+ */
 public class RandomValuePair {
 
     private final int min, max;

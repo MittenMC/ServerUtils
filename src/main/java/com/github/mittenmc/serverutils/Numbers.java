@@ -4,6 +4,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.TreeMap;
 
+/**
+ * Contains many useful methods random numbers and number manipulation.
+ * @author GavvyDizzle, Maximus1027
+ * @version 1.0
+ * @since 1.0
+ */
 public class Numbers {
 
     private final static TreeMap<Integer, String> map = new TreeMap<>();
@@ -28,6 +34,7 @@ public class Numbers {
      * Converts a number to a roman numeral
      * @param number The number to convert
      * @return The number as a String roman numeral
+     * @since 1.0
      */
     public static String toRomanNumeral(int number) {
         int l =  map.floorKey(number);
@@ -43,6 +50,7 @@ public class Numbers {
      * @param value The value to round
      * @param places The maximum number of decimal places
      * @return The rounded number
+     * @since 1.0
      */
     public static double round(double value, int places) {
         return new BigDecimal(value).setScale(places, RoundingMode.HALF_UP).doubleValue();
@@ -54,6 +62,7 @@ public class Numbers {
      * @param min The minimum value.
      * @param max The maximum value.
      * @return An integer between min and max (both inclusive).
+     * @since 1.0
      */
     public static int randomNumber(int min, int max) {
         return (int)Math.floor(Math.random()*(max-min+1)+min);
@@ -63,6 +72,8 @@ public class Numbers {
      * Returns true chance percent of the time.
      *
      * @param chance The percent chance that the method has of returning true (0 = never, 100 = always).
+     * @return True chance % of the time on average
+     * @since 1.0
      */
     public static boolean percentChance(double chance) {
         return chance / 100 > Math.random();
@@ -72,6 +83,8 @@ public class Numbers {
      * Returns true on average once every chance calls.
      *
      * @param chance The average number of method calls before this returns true.
+     * @return True 1/chance of the calls on average
+     * @since 1.0
      */
     public static boolean oneInXChance(double chance) {
         return 1 / chance > Math.random();
@@ -81,10 +94,39 @@ public class Numbers {
      * Gets the time in seconds formatted like 1d 4h 12m 13s.
      * @param seconds The time in seconds to convert
      * @return The time formatted to years/days/hours/mins/secs. "None" if seconds is negative
+     * @since 1.0
      */
     public static String getTimeFormatted(int seconds) {
         if (seconds < 0) {
             return "None";
+        }
+
+        int years = seconds / 31536000;
+        int days = (seconds % 31536000) / 86400;
+        int hours = (seconds % 86400) / 3600;
+        int mins = (seconds % 3600) / 60;
+        int secs = seconds % 60;
+
+        String time = "";
+        if (years != 0) time += years + "y ";
+        if (days != 0) time += days + "d ";
+        if (hours != 0) time += hours + "h ";
+        if (mins != 0) time += mins + "m ";
+        if (secs != 0) time += secs + "s";
+
+        return time.trim();
+    }
+
+    /**
+     * Gets the time in seconds formatted like 1d 4h 12m 13s.
+     * @param seconds The time in seconds to convert
+     * @param noTimeRemainingString What will be returned if there is no time remaining
+     * @return The time formatted to years/days/hours/mins/secs. noTimeRemainingString if seconds is <= 0
+     * @since 1.0
+     */
+    public static String getTimeFormatted(int seconds, String noTimeRemainingString) {
+        if (seconds <= 0) {
+            return noTimeRemainingString;
         }
 
         int years = seconds / 31536000;
@@ -111,6 +153,7 @@ public class Numbers {
      *
      * @param count The number to add a suffix to.
      * @return The number with the appropriate suffix.
+     * @since 1.0
      */
     public static String withSuffix(long count) {
         if (count < 1000L) {
@@ -128,6 +171,8 @@ public class Numbers {
      *
      * @param str The expression to evaluate
      * @return The answer to this expression
+     * @apiNote See {@link <a href="https://stackoverflow.com/a/26227947/12501280">...</a>}
+     * @since 1.0
      */
     public static double eval(final String str) {
         return new Object() {
