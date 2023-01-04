@@ -5,9 +5,9 @@ import java.math.RoundingMode;
 import java.util.TreeMap;
 
 /**
- * Contains many useful methods random numbers and number manipulation.
+ * Contains many useful methods concerning random numbers and number manipulation.
  * @author GavvyDizzle, Maximus1027
- * @version 1.0
+ * @version 1.0.1
  * @since 1.0
  */
 public class Numbers {
@@ -54,6 +54,21 @@ public class Numbers {
      */
     public static double round(double value, int places) {
         return new BigDecimal(value).setScale(places, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    /**
+     * Keeps a number within the bounds of two numbers.
+     * If the value is less than the minimum, it will return the min value.
+     * If the value is greater than the maximum, it will return the max value.
+     *
+     * @param value The value to constrain
+     * @param min The minimum value the result can be
+     * @param max The maximum value the result can be
+     * @return A number n where min <= n <= max.
+     * @since 1.0.1
+     */
+    public static int constrain(int value, int min, int max) {
+        return Math.max(min, Math.min(value, max));
     }
 
     /**
