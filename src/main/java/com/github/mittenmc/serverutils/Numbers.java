@@ -72,6 +72,18 @@ public class Numbers {
     }
 
     /**
+     * Determines if the number is between two numbers
+     *
+     * @param value The value to check
+     * @param min The minimum value, inclusive
+     * @param max The maximum value, inclusive
+     * @return True if min <= value <= max
+     */
+    public static boolean isWithinRange(int value, int min, int max) {
+        return value >= min && value <= max;
+    }
+
+    /**
      * Gets a random number min <= x <= max.
      *
      * @param min The minimum value.
