@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Implementation for a SubCommand which represents a command unique in its first argument.
  * @author GavvyDizzle
- * @version 1.0.1
+ * @version 1.0.2
  * @since 1.0
  */
 public abstract class SubCommand implements Comparable<SubCommand> {
@@ -49,12 +49,12 @@ public abstract class SubCommand implements Comparable<SubCommand> {
     /**
      * Gets a list of suggested responses for this subcommand.
      *
-     * @param player The player
+     * @param sender The sender of the command
      * @param args Whole arguments array
      * @return A String list of suggested responses
      * @since 1.0
      */
-    public abstract List<String> getSubcommandArguments(Player player, String[] args);
+    public abstract List<String> getSubcommandArguments(CommandSender sender, String[] args);
 
     /**
      *
