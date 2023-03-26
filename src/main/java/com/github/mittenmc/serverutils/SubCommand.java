@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * Implementation for a SubCommand which represents a command unique in its first argument.
  * @author GavvyDizzle
- * @version 1.0
+ * @version 1.0.1
  * @since 1.0
  */
-public abstract class SubCommand {
+public abstract class SubCommand implements Comparable<SubCommand> {
 
     /**
      * @return The name of the subcommand
@@ -56,4 +56,14 @@ public abstract class SubCommand {
      */
     public abstract List<String> getSubcommandArguments(Player player, String[] args);
 
+    /**
+     *
+     * @param o the object to be compared.
+     * @return The value of compareTo() given the command name
+     * @since 1.0.1
+     */
+    @Override
+    public int compareTo(SubCommand o) {
+        return getName().compareTo(o.getName());
+    }
 }
