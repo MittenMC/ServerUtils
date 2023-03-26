@@ -78,6 +78,7 @@ public class Numbers {
      * @param min The minimum value, inclusive
      * @param max The maximum value, inclusive
      * @return True if min <= value <= max
+     * @since 1.0.1
      */
     public static boolean isWithinRange(int value, int min, int max) {
         return value >= min && value <= max;
