@@ -2,15 +2,16 @@ package com.github.mittenmc.serverutils;
 
 import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 
 import java.util.List;
 
 /**
  * Contains methods to color and un-color text.
  * Uses IridiumColorAPI when converting text to text with color.
- * See {@link <a href="https://github.com/Iridium-Development/IridiumColorAPI">...</a>}
+ * @see <a href="https://github.com/Iridium-Development/IridiumColorAPI">IridiumColorAPI</a>
  * @author GavvyDizzle
- * @version 1.0
+ * @version 1.0.2
  * @since 1.0
  */
 public class Colors {
@@ -47,6 +48,25 @@ public class Colors {
      */
     public static String strip(String msg) {
         return ChatColor.stripColor(msg);
+    }
+
+    /**
+     * Converts a String in hexadecimal form to an RGB color.
+     * This adds a leading '#' to the string, so you do not need to provide one.
+     * @param hex The hex string
+     * @return The Color or null if the string is invalid
+     * @since 1.0.2
+     */
+    public static Color getColor(String hex) {
+        if (!hex.startsWith("#")) hex = "# + hex";
+
+        if (hex.length() != 7) return null;
+
+        try {
+            java.awt.Color color = java.awt.Color.decode(hex);
+            return Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue());
+        } catch (Exception ignored) {}
+        return null;
     }
 
 }
