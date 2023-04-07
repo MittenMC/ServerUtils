@@ -58,7 +58,7 @@ public class Colors {
      * @since 1.0.2
      */
     public static Color getColor(String hex) {
-        if (!hex.startsWith("#")) hex = "# + hex";
+        if (!hex.startsWith("#")) hex = "#" + hex;
 
         if (hex.length() != 7) return null;
 
@@ -67,6 +67,15 @@ public class Colors {
             return Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue());
         } catch (Exception ignored) {}
         return null;
+    }
+
+    /**
+     * Converts an rbg color to a hexadecimal
+     * @param color The color
+     * @return The hex code with capital letters
+     */
+    public static String getHex(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 
 }

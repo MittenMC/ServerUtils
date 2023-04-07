@@ -49,10 +49,25 @@ public abstract class SubCommand implements Comparable<SubCommand> {
     /**
      * Gets a list of suggested responses for this subcommand.
      *
-     * @param sender The sender of the command
+     * @param player The player
      * @param args Whole arguments array
      * @return A String list of suggested responses
      * @since 1.0
+     * @deprecated As of release 1.0.2, replaced by {@link #getSubcommandArguments(CommandSender, String[])}.
+     * This exists only for backwards compatibility until all plugins have updated to the new version.
+     */
+    @Deprecated
+    public List<String> getSubcommandArguments(Player player, String[] args){
+        return null;
+    }
+
+    /**
+     * Gets a list of suggested responses for this subcommand.
+     *
+     * @param sender The sender of the command
+     * @param args Whole arguments array
+     * @return A String list of suggested responses
+     * @since 1.0.2
      */
     public abstract List<String> getSubcommandArguments(CommandSender sender, String[] args);
 
