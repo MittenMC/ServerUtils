@@ -4,11 +4,11 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 /**
- * Contains methods for converting UUIDs to and from a byte[] array for persistent storage.
- * See {@link <a href="https://github.com/RainbowDashLabs/BasicSQLPlugin">...</a>}
+ * Contains methods for converting UUIDs to and from a byte array for persistent storage.
  * @author RainbowDashLabs
  * @version 1.0
  * @since 1.0
+ * @see <a href="https://sql.chojo.de/en/05/snippets/">SQL and Java</a>
  */
 public class UUIDConverter {
 

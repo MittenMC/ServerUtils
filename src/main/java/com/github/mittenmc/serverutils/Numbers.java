@@ -199,7 +199,7 @@ public class Numbers {
      *
      * @param str The expression to evaluate
      * @return The answer to this expression
-     * @apiNote See {@link <a href="https://stackoverflow.com/a/26227947/12501280">...</a>}
+     * @see <a href="https://stackoverflow.com/a/26227947/12501280">Stack Overflow</a>
      * @since 1.0
      */
     public static double eval(final String str) {
