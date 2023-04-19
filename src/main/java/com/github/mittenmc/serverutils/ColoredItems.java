@@ -3,6 +3,8 @@ package com.github.mittenmc.serverutils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Contains all glass pane colors for easy use as inventory fillers.
@@ -54,7 +56,7 @@ public enum ColoredItems {
      * @return The glass pane of this color
      * @since 1.0
      */
-    public ItemStack getGlass(String displayName) {
+    public ItemStack getGlass(@NotNull String displayName) {
         ItemStack glass = this.getGlass();
         ItemMeta meta = glass.getItemMeta();
         assert meta != null;
@@ -71,7 +73,9 @@ public enum ColoredItems {
      * @return The colored glass if it exists, otherwise AIR
      * @since 1.0
      */
-    public static ItemStack getGlassByName(String color) {
+    public static ItemStack getGlassByName(@Nullable String color) {
+        if (color == null) return new ItemStack(Material.AIR);
+
         try {
             return ColoredItems.valueOf(color.toUpperCase()).getGlass();
         } catch (IllegalArgumentException e) {

@@ -1,5 +1,7 @@
 package com.github.mittenmc.serverutils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ public class UUIDConverter {
      * @return The uuid as a byte[16].
      * @since 1.0
      */
-    public static byte[] convert(UUID uuid) {
+    public static byte[] convert(@NotNull UUID uuid) {
         return ByteBuffer.wrap(new byte[16])
                 .putLong(uuid.getMostSignificantBits())
                 .putLong(uuid.getLeastSignificantBits())

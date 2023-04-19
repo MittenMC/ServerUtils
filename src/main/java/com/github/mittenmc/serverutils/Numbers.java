@@ -1,5 +1,7 @@
 package com.github.mittenmc.serverutils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.TreeMap;
@@ -152,7 +154,7 @@ public class Numbers {
      * @return The time formatted to years/days/hours/mins/secs. noTimeRemainingString if seconds is <= 0
      * @since 1.0
      */
-    public static String getTimeFormatted(int seconds, String noTimeRemainingString) {
+    public static String getTimeFormatted(int seconds, @NotNull String noTimeRemainingString) {
         if (seconds <= 0) {
             return noTimeRemainingString;
         }
@@ -185,7 +187,7 @@ public class Numbers {
      */
     public static String withSuffix(long count) {
         if (count < 1000L) {
-            return "" + count;
+            return String.valueOf(count);
         }
         int exp = (int)(Math.log(count) / Math.log(1000.0));
         return String.format("%.2f%c", count / Math.pow(1000.0, exp), "kMBTqQ".charAt(exp - 1));
@@ -202,7 +204,7 @@ public class Numbers {
      * @see <a href="https://stackoverflow.com/a/26227947/12501280">Stack Overflow</a>
      * @since 1.0
      */
-    public static double eval(final String str) {
+    public static double eval(@NotNull final String str) {
         return new Object() {
             int pos = -1, ch;
 

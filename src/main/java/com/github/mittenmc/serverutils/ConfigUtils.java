@@ -1,6 +1,8 @@
 package com.github.mittenmc.serverutils;
 
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Contains useful methods for converting information from .yml files to usable object types.
@@ -18,8 +20,8 @@ public class ConfigUtils {
      * @return The given material, DIRT otherwise.
      * @since 1.0
      */
-    public static Material getMaterial(String material) {
-        if (Material.getMaterial(material) == null) {
+    public static Material getMaterial(@Nullable String material) {
+        if (material == null || Material.getMaterial(material) == null) {
             return Material.DIRT;
         }
         return Material.getMaterial(material);
@@ -33,8 +35,8 @@ public class ConfigUtils {
      * @return The given material, the defaultMaterial otherwise.
      * @since 1.0
      */
-    public static Material getMaterial(String material, Material defaultMaterial) {
-        if (Material.getMaterial(material) == null) {
+    public static Material getMaterial(@Nullable String material, @NotNull Material defaultMaterial) {
+        if (material == null || Material.getMaterial(material) == null) {
             return defaultMaterial;
         }
         return Material.getMaterial(material);

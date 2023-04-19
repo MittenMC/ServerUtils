@@ -3,6 +3,7 @@ package com.github.mittenmc.serverutils;
 import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class Colors {
      * @return A string with colors added
      * @since 1.0
      */
-    public static String conv(String str) {
+    public static String conv(@NotNull String str) {
         return IridiumColorAPI.process(str);
     }
 
@@ -34,7 +35,7 @@ public class Colors {
      * @return A list with colors added to all lines
      * @since 1.0
      */
-    public static List<String> conv(List<String> list) {
+    public static List<String> conv(@NotNull List<String> list) {
         return IridiumColorAPI.process(list);
     }
 
@@ -46,7 +47,7 @@ public class Colors {
      * @return The stripped message
      * @since 1.0
      */
-    public static String strip(String msg) {
+    public static String strip(@NotNull String msg) {
         return ChatColor.stripColor(msg);
     }
 
@@ -57,7 +58,7 @@ public class Colors {
      * @return The Color or null if the string is invalid
      * @since 1.0.2
      */
-    public static Color getColor(String hex) {
+    public static Color getColor(@NotNull String hex) {
         if (!hex.startsWith("#")) hex = "#" + hex;
 
         if (hex.length() != 7) return null;
@@ -74,7 +75,7 @@ public class Colors {
      * @param color The color
      * @return The hex code with capital letters
      */
-    public static String getHex(Color color) {
+    public static String getHex(@NotNull Color color) {
         return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 
