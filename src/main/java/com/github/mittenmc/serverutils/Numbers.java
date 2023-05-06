@@ -130,6 +130,9 @@ public class Numbers {
         if (seconds < 0) {
             return "None";
         }
+        else if (seconds == 0) {
+            return "0s";
+        }
 
         int years = seconds / 31536000;
         int days = (seconds % 31536000) / 86400;

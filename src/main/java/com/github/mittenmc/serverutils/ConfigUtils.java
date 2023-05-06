@@ -21,10 +21,7 @@ public class ConfigUtils {
      * @since 1.0
      */
     public static Material getMaterial(@Nullable String material) {
-        if (material == null || Material.getMaterial(material) == null) {
-            return Material.DIRT;
-        }
-        return Material.getMaterial(material);
+        return getMaterial(material, Material.DIRT);
     }
 
     /**
@@ -36,10 +33,12 @@ public class ConfigUtils {
      * @since 1.0
      */
     public static Material getMaterial(@Nullable String material, @NotNull Material defaultMaterial) {
-        if (material == null || Material.getMaterial(material) == null) {
+        if (material == null || Material.getMaterial(material.toUpperCase()) == null) {
             return defaultMaterial;
         }
-        return Material.getMaterial(material);
+
+        Material mat = Material.getMaterial(material.toUpperCase());
+        return mat != null ? mat : defaultMaterial;
     }
 
 }

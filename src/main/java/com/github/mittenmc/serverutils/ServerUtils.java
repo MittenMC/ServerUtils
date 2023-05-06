@@ -6,13 +6,7 @@ public final class ServerUtils extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // hi
-    }
-
-    @Override
-    public void onDisable() {
-        // there
+        getServer().getPluginManager().registerEvents(new PlayerNameCache(), this);
     }
 
 }
-// :)

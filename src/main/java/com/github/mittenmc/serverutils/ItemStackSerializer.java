@@ -24,6 +24,7 @@ import org.apache.commons.lang.SerializationException;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,8 +32,8 @@ import java.io.IOException;
 
 /**
  * Contains methods for converting ItemStacks to and from a byte[] array for persistent item storage.
- * @author Exo-Network
- * @version 1.0
+ * @author Exo-Network, GavvyDizzle
+ * @version 1.0.2
  * @since 1.0
  */
 public class ItemStackSerializer {
@@ -56,6 +57,34 @@ public class ItemStackSerializer {
     }
 
     /**
+     * Converts an array of ItemStacks to a byte array
+     * @param items The ItemStack list
+     * @return The byte array representing the array consisting of the size then the items, or null if the input is null
+     * @throws SerializationException Thrown when serialization fails
+     * @since 1.0.2
+     */
+    public static byte[] serializeItemStackArray(@Nullable ItemStack[] items) throws SerializationException {
+        if (items == null) return null;
+
+        try {
+            @Cleanup ByteArrayOutputStream os = new ByteArrayOutputStream();
+            @Cleanup BukkitObjectOutputStream bos = new BukkitObjectOutputStream(os);
+
+            // Write the size of the list
+            bos.writeInt(items.length);
+
+            // Save every element in the list
+            for (ItemStack itemStack : items) {
+                bos.writeObject(itemStack);
+            }
+
+            return os.toByteArray();
+        } catch (Exception ex) {
+            throw new SerializationException(ex);
+        }
+    }
+
+    /**
      * Converts a byte array to an ItemStack.
      * @param b The byte array
      * @return The ItemStack representing this byte array
@@ -68,6 +97,35 @@ public class ItemStackSerializer {
             @Cleanup BukkitObjectInputStream bois = new BukkitObjectInputStream(bais);
             return (ItemStack) bois.readObject();
         } catch (Exception ex) {
+            throw new SerializationException(new String(b), ex);
+        }
+    }
+
+    /**
+     * Converts a byte array to an array of ItemStacks.
+     * @param b The byte array consisting of the size then the items
+     * @return The ItemStack array representing this byte array, or null if the input is null
+     * @throws SerializationException Thrown when serialization fails
+     * @since 1.0.2
+     */
+    @Nullable
+    public static ItemStack[] deserializeItemStackArray(byte[] b) throws SerializationException {
+        if (b == null) return null;
+
+        try {
+            @Cleanup ByteArrayInputStream bais = new ByteArrayInputStream(b);
+            @Cleanup BukkitObjectInputStream bois = new BukkitObjectInputStream(bais);
+
+            int size = bois.readInt();
+            ItemStack[] items = new ItemStack[size];
+
+            // Read the serialized items
+            for (int i = 0; i < size; i++) {
+                items[i] = (ItemStack) bois.readObject();
+            }
+
+            return items;
+        } catch (IOException | ClassNotFoundException ex) {
             throw new SerializationException(new String(b), ex);
         }
     }

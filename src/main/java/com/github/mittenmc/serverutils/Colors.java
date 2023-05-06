@@ -4,7 +4,9 @@ import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +26,8 @@ public class Colors {
      * @return A string with colors added
      * @since 1.0
      */
-    public static String conv(@NotNull String str) {
+    public static String conv(@Nullable String str) {
+        if (str == null) return "";
         return IridiumColorAPI.process(str);
     }
 
@@ -35,7 +38,8 @@ public class Colors {
      * @return A list with colors added to all lines
      * @since 1.0
      */
-    public static List<String> conv(@NotNull List<String> list) {
+    public static List<String> conv(@Nullable List<String> list) {
+        if (list == null) return new ArrayList<>();
         return IridiumColorAPI.process(list);
     }
 
