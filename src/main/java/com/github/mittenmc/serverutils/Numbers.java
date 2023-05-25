@@ -197,6 +197,24 @@ public class Numbers {
     }
 
     /**
+     * Gets the number nicely formatted to a power of 1,000.
+     * If the number is less than 1000, it will have two decimal places (formatted as cents).
+     * Most numbers will be formatted with two decimal places and up to 3 numbers before the decimal.
+     * e.g. 10,234,567 -> 10.23M
+     * The valid powers are none(<1000^1) k(<1000^2) M(<1000^3) B(<1000^4) T(<1000^5) q(<1000^6) Q(<1000^7)
+     *
+     * @param n The number to add a suffix to.
+     * @return The number with the appropriate suffix.
+     * @since 1.0
+     */
+    public static String withSuffix(double n) {
+        if (n < 1000L) {
+            return String.valueOf(Numbers.round(n, 2));
+        }
+        return withSuffix((long) n);
+    }
+
+    /**
      * Evaluates a mathematical expression.
      * Handles the four basic operations, + - * /,
      * parenthesis, exponents ^ , sqrt,

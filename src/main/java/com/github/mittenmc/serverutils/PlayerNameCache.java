@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -59,6 +61,21 @@ public class PlayerNameCache implements Listener {
         String name = player.getName() != null ? player.getName() : "null";
         nameCache.put(player.getUniqueId(), name);
         return name;
+    }
+
+    /**
+     * @param uuids The list of player UUIDs
+     * @return A list of player names with the order preserved
+     * @since 1.0.3
+     */
+    @NotNull
+    public static Collection<String> get(Collection<UUID> uuids) {
+        ArrayList<String> arr = new ArrayList<>(uuids.size());
+
+        for (UUID uuid : uuids) {
+            arr.add(get(uuid));
+        }
+        return arr;
     }
 
     // Add players to the cache on join to overwrite their original entry if their name changed
