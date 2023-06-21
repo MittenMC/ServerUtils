@@ -55,6 +55,7 @@ public class ItemStackUtils {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             displayName = displayName.replace(entry.getKey(), entry.getValue());
         }
+        meta.setDisplayName(displayName);
         itemStack.setItemMeta(meta);
     }
 
@@ -80,6 +81,7 @@ public class ItemStackUtils {
             }
             lore.set(i, line);
         }
+        meta.setLore(lore);
         itemStack.setItemMeta(meta);
     }
 

@@ -9,7 +9,7 @@ import java.util.TreeMap;
 /**
  * Contains many useful methods concerning random numbers and number manipulation.
  * @author GavvyDizzle, Maximus1027
- * @version 1.0.1
+ * @version 1.0.3
  * @since 1.0
  */
 public class Numbers {
@@ -74,6 +74,36 @@ public class Numbers {
     }
 
     /**
+     * Keeps a number within the bounds of two numbers.
+     * If the value is less than the minimum, it will return the min value.
+     * If the value is greater than the maximum, it will return the max value.
+     *
+     * @param value The value to constrain
+     * @param min The minimum value the result can be
+     * @param max The maximum value the result can be
+     * @return A number n where min <= n <= max.
+     * @since 1.0.3
+     */
+    public static long constrain(long value, long min, long max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    /**
+     * Keeps a number within the bounds of two numbers.
+     * If the value is less than the minimum, it will return the min value.
+     * If the value is greater than the maximum, it will return the max value.
+     *
+     * @param value The value to constrain
+     * @param min The minimum value the result can be
+     * @param max The maximum value the result can be
+     * @return A number n where min <= n <= max.
+     * @since 1.0.3
+     */
+    public static double constrain(double value, double min, double max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    /**
      * Determines if the number is between two numbers
      *
      * @param value The value to check
@@ -87,6 +117,32 @@ public class Numbers {
     }
 
     /**
+     * Determines if the number is between two numbers
+     *
+     * @param value The value to check
+     * @param min The minimum value, inclusive
+     * @param max The maximum value, inclusive
+     * @return True if min <= value <= max
+     * @since 1.0.3
+     */
+    public static boolean isWithinRange(long value, long min, long max) {
+        return value >= min && value <= max;
+    }
+
+    /**
+     * Determines if the number is between two numbers
+     *
+     * @param value The value to check
+     * @param min The minimum value, inclusive
+     * @param max The maximum value, inclusive
+     * @return True if min <= value <= max
+     * @since 1.0.3
+     */
+    public static boolean isWithinRange(double value, double min, double max) {
+        return value >= min && value <= max;
+    }
+
+    /**
      * Gets a random number min <= x <= max.
      *
      * @param min The minimum value.
@@ -95,7 +151,31 @@ public class Numbers {
      * @since 1.0
      */
     public static int randomNumber(int min, int max) {
-        return (int)Math.floor(Math.random()*(max-min+1)+min);
+        return (int) Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    /**
+     * Gets a random number min <= x <= max.
+     *
+     * @param min The minimum value.
+     * @param max The maximum value.
+     * @return An integer between min and max (both inclusive).
+     * @since 1.0
+     */
+    public static long randomNumber(long min, long max) {
+        return (long) Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    /**
+     * Gets a random number min <= x < max.
+     *
+     * @param min The minimum value.
+     * @param max The maximum value.
+     * @return A double between min (inclusive) and max (exclusive).
+     * @since 1.0.3
+     */
+    public static double randomNumber(double min, double max) {
+        return Math.random()*(max-min)+min;
     }
 
     /**
