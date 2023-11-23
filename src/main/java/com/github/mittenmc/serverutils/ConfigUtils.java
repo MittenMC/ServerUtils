@@ -1,13 +1,19 @@
 package com.github.mittenmc.serverutils;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * Contains useful methods for converting information from .yml files to usable object types.
  * @author GavvyDizzle
- * @version 1.0
+ * @version 1.0.6
  * @since 1.0
  */
 public class ConfigUtils {
@@ -33,12 +39,119 @@ public class ConfigUtils {
      * @since 1.0
      */
     public static Material getMaterial(@Nullable String material, @NotNull Material defaultMaterial) {
-        if (material == null || Material.getMaterial(material.toUpperCase()) == null) {
-            return defaultMaterial;
-        }
+        if (material == null) return defaultMaterial;
 
         Material mat = Material.getMaterial(material.toUpperCase());
         return mat != null ? mat : defaultMaterial;
     }
 
+    /**
+     * Gets an ItemStack from a ConfigurationSection.
+     * If something goes wrong, DIRT will be returned.
+     * Use {@link ConfigUtils#getItemStack(ConfigurationSection, String, Logger)} to include logging.
+     *
+     * @param configurationSection The ConfigurationSection to read from.
+     * @return The ItemStack with properties from the ConfigurationSection.
+     * @since 1.0.6
+     */
+    @NotNull
+    public static ItemStack getItemStack(@Nullable ConfigurationSection configurationSection) {
+        if (configurationSection == null) return new ItemStack(Material.DIRT);
+
+        ItemStack itemStack;
+        if (configurationSection.getBoolean("usingSkull")) {
+            String skullLink = configurationSection.getString("skullLink");
+            if (skullLink == null || skullLink.isBlank()) {
+                return new ItemStack(Material.DIRT);
+            }
+            itemStack = SkullUtils.getSkull(skullLink);
+        }
+        else {
+            itemStack = new ItemStack(getMaterial(configurationSection.getString("material"), Material.DIRT));
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        assert meta != null;
+
+        if (configurationSection.contains("name")) {
+            meta.setDisplayName(Colors.conv(configurationSection.getString("name")));
+        }
+
+        if (configurationSection.contains("lore")) {
+            meta.setLore(Colors.conv(configurationSection.getStringList("lore")));
+        }
+
+        if (configurationSection.contains("customModelData")) {
+            int customModelData = configurationSection.getInt("customModelData");
+            if (customModelData > 0) meta.setCustomModelData(customModelData);
+        }
+
+        if (configurationSection.contains("flags")) {
+            for (String flag : configurationSection.getStringList("flags")) {
+                try {
+                    meta.addItemFlags(ItemFlag.valueOf(flag));
+                } catch (Exception ignored) {}
+            }
+        }
+
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    /**
+     * Gets an ItemStack from a ConfigurationSection.
+     * If something goes wrong, DIRT will be returned.
+     *
+     * @param configurationSection The ConfigurationSection to read from.
+     * @param fileName The name of the original config file.
+     * @param logger The calling plugin's logger.
+     * @return The ItemStack with properties from the ConfigurationSection.
+     * @since 1.0.6
+     */
+    @NotNull
+    public static ItemStack getItemStack(@Nullable ConfigurationSection configurationSection, String fileName, Logger logger) {
+        if (configurationSection == null) return new ItemStack(Material.DIRT);
+
+        ItemStack itemStack;
+        if (configurationSection.getBoolean("usingSkull")) {
+            String skullLink = configurationSection.getString("skullLink");
+            if (skullLink == null || skullLink.isBlank()) {
+                logger.warning("No skull link given at " + configurationSection.getCurrentPath() + ".skullLink in " + fileName);
+                return new ItemStack(Material.DIRT);
+            }
+            itemStack = SkullUtils.getSkull(skullLink);
+        }
+        else {
+            itemStack = new ItemStack(getMaterial(configurationSection.getString("material"), Material.DIRT));
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        assert meta != null;
+
+        if (configurationSection.contains("name")) {
+            meta.setDisplayName(Colors.conv(configurationSection.getString("name")));
+        }
+
+        if (configurationSection.contains("lore")) {
+            meta.setLore(Colors.conv(configurationSection.getStringList("lore")));
+        }
+
+        if (configurationSection.contains("customModelData")) {
+            int customModelData = configurationSection.getInt("customModelData");
+            if (customModelData > 0) meta.setCustomModelData(customModelData);
+        }
+
+        if (configurationSection.contains("flags")) {
+            for (String flag : configurationSection.getStringList("flags")) {
+                try {
+                    meta.addItemFlags(ItemFlag.valueOf(flag));
+                } catch (Exception e) {
+                    logger.warning("Invalid ItemFlag '" + flag + "' at " + configurationSection.getCurrentPath() + ".flags in " + fileName);
+                }
+            }
+        }
+
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
 }
