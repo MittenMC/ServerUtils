@@ -4,6 +4,7 @@ import com.github.mittenmc.serverutils.ColoredItems;
 import com.github.mittenmc.serverutils.Colors;
 import com.github.mittenmc.serverutils.ItemStackUtils;
 import com.github.mittenmc.serverutils.Numbers;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,27 +12,34 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * An inventory implementation which displays contents across pages.
  * The default menu formatting can be changed through setter methods.
  * @author GavvyDizzle
- * @version 1.0.8
+ * @version 1.0.9
  * @since 1.0.8
  */
+@SuppressWarnings("unused")
 public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMenu {
 
     private String inventoryName;
-    private final int inventorySize, itemsPerPage;
+    private final int inventorySize;
+    @Setter private List<Integer> slots;
 
     private int pageDownSlot, pageInfoSlot, pageUpSlot;
-    private ItemStack pageInfoItem, previousPageItem, nextPageItem, pageRowFiller;
+    @Setter private ItemStack pageInfoItem, previousPageItem, nextPageItem, pageRowFiller;
 
     private final HashMap<UUID, Integer> playerPages;
     private final List<E> itemList;
     private final Comparator<E> comparator;
+
+    private int backButtonSlot;
+    private ItemStack backButton;
 
     public PagesMenu(String inventoryName) {
         playerPages = new HashMap<>();
@@ -39,9 +47,9 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
         comparator = null;
 
         inventorySize = 54;
-        itemsPerPage = inventorySize - 9;
+        slots = IntStream.rangeClosed(0, 44).boxed().toList();
 
-        this.inventoryName = inventoryName;
+        this.inventoryName = Colors.conv(inventoryName);
         loadDefaultItems();
     }
 
@@ -51,9 +59,33 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
         this.comparator = comparator;
 
         inventorySize = 54;
-        itemsPerPage = inventorySize - 9;
+        slots = IntStream.rangeClosed(0, 44).boxed().toList();
 
-        this.inventoryName = inventoryName;
+        this.inventoryName = Colors.conv(inventoryName);
+        loadDefaultItems();
+    }
+
+    public PagesMenu(String inventoryName, List<Integer> slots) {
+        playerPages = new HashMap<>();
+        itemList = new ArrayList<>();
+        comparator = null;
+
+        inventorySize = 54;
+        this.slots = slots;
+
+        this.inventoryName = Colors.conv(inventoryName);
+        loadDefaultItems();
+    }
+
+    public PagesMenu(String inventoryName, List<Integer> slots, Comparator<E> comparator) {
+        playerPages = new HashMap<>();
+        itemList = new ArrayList<>();
+        this.comparator = comparator;
+
+        inventorySize = 54;
+        this.slots = slots;
+
+        this.inventoryName = Colors.conv(inventoryName);
         loadDefaultItems();
     }
 
@@ -168,9 +200,11 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
     public void openInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, inventorySize, inventoryName);
 
-        for (int i = itemsPerPage; i < inventorySize; i++) {
+        for (int i = inventorySize-9; i < inventorySize; i++) {
             inventory.setItem(i, pageRowFiller);
         }
+
+        if (backButton != null) inventory.setItem(backButtonSlot, backButton);
 
         player.openInventory(inventory);
         playerPages.put(player.getUniqueId(), 1);
@@ -189,7 +223,10 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
         Player player = (Player) e.getWhoClicked();
         if (e.getClickedInventory() != e.getView().getTopInventory()) return;
 
-        if (e.getSlot() == pageUpSlot) {
+        if (backButton != null && e.getSlot() == backButtonSlot) {
+            onBackButtonClick(player);
+        }
+        else if (e.getSlot() == pageUpSlot) {
             if (playerPages.get(player.getUniqueId()) < getMaxPage()) {
                 onPageUp(player);
             }
@@ -200,17 +237,18 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
             }
         }
         else {
-            if (e.getSlot() >= itemsPerPage) return;
-
-            E item;
-            try {
-                item = itemList.get(getIndexByPage(playerPages.get(player.getUniqueId()), e.getSlot()));
-            } catch (Exception ignored) {
-                return;
-            }
-
-            onItemClick(e, player, item);
+            E item = getItemBySlot(playerPages.get(player.getUniqueId()), e.getSlot());
+            if (item != null) onItemClick(e, player, item);
         }
+    }
+
+    /**
+     * Handles what happens when the player clicks the back button.
+     * By default, it will close this inventory.
+     * @param player The player
+     */
+    public void onBackButtonClick(Player player) {
+        player.closeInventory();
     }
 
     /**
@@ -249,18 +287,31 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
         Inventory inventory = player.getOpenInventory().getTopInventory();
         int page = playerPages.get(player.getUniqueId());
 
-        for (int i = 0; i < itemsPerPage; i++) {
-            inventory.clear(i);
+        for (int slot : slots) {
+            inventory.setItem(slot, onItemClear(slot));
         }
 
         for (int i = 0; i < getNumItemsOnPage(page); i++) {
-            E item = itemList.get(getIndexByPage(page, i));
-            if (item != null) inventory.setItem(i, onItemAdd(item, player));
+            int slot = slots.get(i);
+
+            E item = getItemBySlot(page, slot);
+            if (item != null) inventory.setItem(slot, onItemAdd(item, player));
         }
 
         inventory.setItem(pageDownSlot, createPreviousPageItem(page));
         inventory.setItem(pageInfoSlot, createPageItem(page));
         inventory.setItem(pageUpSlot, createNextPageItem(page));
+    }
+
+    /**
+     * Called when an item is removed from the inventory.
+     * By default, a null value is returned.
+     * @param slot The item slot
+     * @return The resulting ItemStack
+     */
+    @Nullable
+    public ItemStack onItemClear(int slot) {
+        return null;
     }
 
     /**
@@ -311,7 +362,7 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
      * @return The max page
      */
     public int getMaxPage() {
-        return (itemList.size() - 1) / itemsPerPage + 1;
+        return (itemList.size() - 1) / slots.size() + 1;
     }
 
     /**
@@ -320,17 +371,16 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
      * @return The number of items filling this page
      */
     private int getNumItemsOnPage(int page) {
-        return Math.min(itemsPerPage, itemList.size() - (page - 1) * itemsPerPage);
+        return Math.min(slots.size(), itemList.size() - (page - 1) * slots.size());
     }
 
-    /**
-     * Calculates the index of the list to get.
-     * @param page The page
-     * @param slot The clicked slot
-     * @return The item list index
-     */
-    private int getIndexByPage(int page, int slot) {
-        return (page - 1) * itemsPerPage + slot;
+    private E getItemBySlot(int page, int slot) {
+        if (!slots.contains(slot)) return null;
+
+        int index = (page - 1) * slots.size() + slots.indexOf(slot);
+        if (!Numbers.isWithinRange(index, 0, itemList.size()-1)) return null;
+
+        return itemList.get(index);
     }
 
     //***** GETTERS & SETTERS *****//
@@ -356,60 +406,35 @@ public abstract class PagesMenu<E extends Comparable<E>> implements ClickableMen
         return pageInfoItem.clone();
     }
 
-    public void setInventoryName(String inventoryName) {
-        this.inventoryName = inventoryName;
-    }
-
-    /**
-     * Updates the previous page item.
-     * This item does not parse any placeholders by default.
-     * @param previousPageItem The new item
-     */
-    public void setPreviousPageItem(ItemStack previousPageItem) {
-        this.previousPageItem = previousPageItem;
-    }
-
-    /**
-     * Updates the next page item.
-     * This item does not parse any placeholders by default.
-     * @param nextPageItem The new item
-     */
-    public void setNextPageItem(ItemStack nextPageItem) {
-        this.nextPageItem = nextPageItem;
-    }
-
-    /**
-     * Updates the page info item.
-     * This item parses {max} and {max_page} placeholders by default.
-     * @param pageInfoItem The new item
-     */
-    public void setPageInfoItem(ItemStack pageInfoItem) {
-        this.pageInfoItem = pageInfoItem;
-    }
-
-    /**
-     * Updates the page row filler item
-     * @param pageRowFiller The new item
-     */
-    public void setPageRowFiller(ItemStack pageRowFiller) {
-        this.pageRowFiller = pageRowFiller;
-    }
-
     public void setPageDownSlot(int pageDownSlot) {
-        if (Numbers.isWithinRange(pageDownSlot, itemsPerPage-1, inventorySize-1)) {
+        if (Numbers.isWithinRange(pageDownSlot, slots.size()-1, inventorySize-1)) {
             this.pageDownSlot = pageDownSlot;
         }
     }
 
     public void setPageUpSlot(int pageUpSlot) {
-        if (Numbers.isWithinRange(pageDownSlot, itemsPerPage-1, inventorySize-1)) {
+        if (Numbers.isWithinRange(pageDownSlot, slots.size()-1, inventorySize-1)) {
             this.pageUpSlot = pageUpSlot;
         }
     }
 
     public void setPageInfoSlot(int pageInfoSlot) {
-        if (Numbers.isWithinRange(pageDownSlot, itemsPerPage-1, inventorySize-1)) {
+        if (Numbers.isWithinRange(pageDownSlot, slots.size()-1, inventorySize-1)) {
             this.pageInfoSlot = pageInfoSlot;
         }
+    }
+
+    /**
+     * Tells the inventory how to display the back button.
+     * @param slot The slot
+     * @param itemStack The item to display
+     */
+    public void setBackButton(int slot, ItemStack itemStack) {
+        backButtonSlot = Numbers.constrain(slot, 45, 53);
+        backButton = itemStack;
+    }
+
+    public void setInventoryName(String inventoryName) {
+        this.inventoryName = Colors.conv(inventoryName);
     }
 }
