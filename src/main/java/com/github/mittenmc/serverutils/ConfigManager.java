@@ -10,22 +10,32 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * A FileConfiguration management interface.
- * This only supports files in a plugin's top-level directory.
  * @author GavvyDizzle
- * @version 1.0.4
+ * @version 1.0.13
  * @since 1.0.4
  */
+@SuppressWarnings("unused")
 public class ConfigManager {
 
     private class FileObject {
         private final File file;
         private FileConfiguration fileConfiguration;
 
-        private FileObject(String fileName) {
-            this.file = new File(plugin.getDataFolder(), fileName);
+        private FileObject(String path) {
+            this.file = new File(plugin.getDataFolder(), path);
+
+            if (path.contains("/")) {
+                File parentDir = file.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    //noinspection ResultOfMethodCallIgnored
+                    parentDir.mkdirs();
+                }
+            }
+
             reload();
         }
 
@@ -39,7 +49,7 @@ public class ConfigManager {
                 fileConfiguration.save(file);
             }
             catch (IOException e) {
-                plugin.getLogger().severe("Failed to save file: " + file.getName());
+                plugin.getLogger().log(Level.SEVERE, "Failed to save file: " + file.getName(), e);
             }
         }
     }
@@ -58,14 +68,21 @@ public class ConfigManager {
         registerFiles(fileNameSet);
     }
 
+    private String cleanPath(String path) {
+        if (path.startsWith("/")) path = path.substring(1);
+        if (!path.endsWith(".yml")) path += ".yml";
+
+        return path;
+    }
+
     /**
      * Registers a new yml file.
      * If the file is already registered, this will fail silently.
-     * It will not register a file if the requested file is config.yml.
+     * It will not register a file if the requested file is config.yml and in the top level directory
      * @param name The name of the new file
      */
     public void registerFile(String name) {
-        if (!name.endsWith(".yml")) name += ".yml";
+        name = cleanPath(name);
         if (name.equals("config.yml")) return;
 
         if (!fileMap.containsKey(name)) {
@@ -89,7 +106,7 @@ public class ConfigManager {
      */
     @Nullable
     public FileConfiguration get(String fileName) {
-        if (!fileName.endsWith(".yml")) fileName += ".yml";
+        fileName = cleanPath(fileName);
 
         FileObject fileObject = fileMap.get(fileName);
         if (fileObject == null) return null;
@@ -102,7 +119,7 @@ public class ConfigManager {
      * @param fileName The name of the config file
      */
     public void save(String fileName) {
-        if (!fileName.endsWith(".yml")) fileName += ".yml";
+        fileName = cleanPath(fileName);
 
         FileObject fileObject = fileMap.get(fileName);
         if (fileObject != null) {
@@ -124,7 +141,7 @@ public class ConfigManager {
      * @param fileName The name of the config file
      */
     public void reload(String fileName) {
-        if (!fileName.endsWith(".yml")) fileName += ".yml";
+        fileName = cleanPath(fileName);
 
         FileObject fileObject = fileMap.get(fileName);
         if (fileObject != null) {

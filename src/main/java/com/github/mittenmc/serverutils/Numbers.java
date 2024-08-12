@@ -4,46 +4,54 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Random;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Contains many useful methods concerning random numbers and number manipulation.
  * @author GavvyDizzle, Maximus1027
- * @version 1.0.3
+ * @version 1.1.6
  * @since 1.0
  */
+@SuppressWarnings("unused")
 public class Numbers {
 
-    private final static TreeMap<Integer, String> map = new TreeMap<>();
+    private final static TreeMap<Integer, String> romanMap = new TreeMap<>();
+    private final static Random random = new Random();
+    private final static Pattern timeStringPattern = Pattern.compile("(\\d+)([ywdhms])");
 
     static {
-        map.put(1000, "M");
-        map.put(900, "CM");
-        map.put(500, "D");
-        map.put(400, "CD");
-        map.put(100, "C");
-        map.put(90, "XC");
-        map.put(50, "L");
-        map.put(40, "XL");
-        map.put(10, "X");
-        map.put(9, "IX");
-        map.put(5, "V");
-        map.put(4, "IV");
-        map.put(1, "I");
+        romanMap.put(1000, "M");
+        romanMap.put(900, "CM");
+        romanMap.put(500, "D");
+        romanMap.put(400, "CD");
+        romanMap.put(100, "C");
+        romanMap.put(90, "XC");
+        romanMap.put(50, "L");
+        romanMap.put(40, "XL");
+        romanMap.put(10, "X");
+        romanMap.put(9, "IX");
+        romanMap.put(5, "V");
+        romanMap.put(4, "IV");
+        romanMap.put(1, "I");
     }
 
     /**
      * Converts a number to a roman numeral
-     * @param number The number to convert
+     * @param num The number to convert
      * @return The number as a String roman numeral
      * @since 1.0
      */
-    public static String toRomanNumeral(int number) {
-        int l =  map.floorKey(number);
-        if ( number == l ) {
-            return map.get(number);
+    public static String toRomanNumeral(int num) {
+        StringBuilder sb = new StringBuilder();
+        while (num > 0) {
+            int floorKey = romanMap.floorKey(num);
+            sb.append(romanMap.get(floorKey));
+            num -= floorKey;
         }
-        return map.get(l) + toRomanNumeral(number-l);
+        return sb.toString();
     }
 
     /**
@@ -151,7 +159,7 @@ public class Numbers {
      * @since 1.0
      */
     public static int randomNumber(int min, int max) {
-        return (int) Math.floor(Math.random()*(max-min+1)+min);
+        return random.nextInt(min, max+1);
     }
 
     /**
@@ -163,7 +171,7 @@ public class Numbers {
      * @since 1.0
      */
     public static long randomNumber(long min, long max) {
-        return (long) Math.floor(Math.random()*(max-min+1)+min);
+        return random.nextLong(min, max+1);
     }
 
     /**
@@ -175,7 +183,7 @@ public class Numbers {
      * @since 1.0.3
      */
     public static double randomNumber(double min, double max) {
-        return Math.random()*(max-min)+min;
+        return random.nextDouble(min, max);
     }
 
     /**
@@ -186,7 +194,7 @@ public class Numbers {
      * @since 1.0
      */
     public static boolean percentChance(double chance) {
-        return chance / 100 > Math.random();
+        return chance / 100 > random.nextDouble();
     }
 
     /**
@@ -197,7 +205,108 @@ public class Numbers {
      * @since 1.0
      */
     public static boolean oneInXChance(double chance) {
-        return 1 / chance > Math.random();
+        return 1 / chance > random.nextDouble();
+    }
+
+    /**
+     * Generates a normally distributed number.
+     * @param mean The mean
+     * @param stdDev The standard deviation
+     * @return A normally distributed double
+     * @since 1.0.12
+     */
+    public static double nextGaussian(double mean, double stdDev) {
+        return random.nextGaussian(mean, stdDev);
+    }
+
+    /**
+     * Generates a normally distributed number.
+     * This does not ensure the random value is within the range before clamping it.
+     * @param mean The mean
+     * @param stdDev The standard deviation
+     * @param min The minimum value
+     * @param max The maximum value
+     * @return A normally distributed double within the range [min,max]
+     * @since 1.0.12
+     */
+    public static double nextGaussian(double mean, double stdDev, double min, double max) {
+        return constrain(random.nextGaussian(mean, stdDev), min, max);
+    }
+
+    /**
+     * Extracts the total number of seconds from a given time string.
+     * <p>
+     * The input string can be in one of the following formats:
+     * <ul>
+     *     <li>A direct number representing seconds (e.g., "3600").</li>
+     *     <li>A time duration string that includes components for years (y), weeks (w), days (d),
+     *     hours (h), minutes (m), and seconds (s), which can be chained together (e.g., "2y1d1h45m").</li>
+     * </ul>
+     * </p>
+     * <p>
+     * The method supports the following conversions:
+     * <ul>
+     *     <li>1 year (y) = 365 days = 31,536,000 seconds</li>
+     *     <li>1 week (w) = 7 days = 604,800 seconds</li>
+     *     <li>1 day (d) = 24 hours = 86,400 seconds</li>
+     *     <li>1 hour (h) = 60 minutes = 3,600 seconds</li>
+     *     <li>1 minute (m) = 60 seconds</li>
+     * </ul>
+     * </p>
+     * <p>
+     * If the input string is a direct number (only digits), it will be treated as the total number of seconds.
+     * If the string contains a combination of time components, each component will be converted to seconds
+     * and summed up to produce the total number of seconds. If the value is greater than the {@link Integer} limit
+     * or negative, then this will return a value of -1.
+     * </p>
+     *
+     * @param timeString The input string representing a time duration or a direct number of seconds
+     * @return The total number of seconds represented by the input string or -1 if invalid
+     * @since 1.1.6
+     */
+    public static int parseSeconds(String timeString) {
+        long value = parseSecondsLong(timeString);
+        if (value > Integer.MAX_VALUE) {
+            return -1;
+        }
+        return (int) value;
+    }
+
+    /**
+     * The same logic as {@link #parseSeconds(String)}, but supports values up to the {@link Long} limit.
+     * @param timeString The input string representing a time duration or a direct number of seconds
+     * @return The total number of seconds represented by the input string or -1 if invalid
+     * @see #parseSeconds(String)
+     * @since 1.1.6
+     */
+    public static long parseSecondsLong(String timeString) {
+        Matcher matcher = timeStringPattern.matcher(timeString);
+        long totalSeconds = 0;
+
+        while (matcher.find()) {
+            int value = Integer.parseInt(matcher.group(1));
+            String unit = matcher.group(2);
+
+            switch (unit) {
+                case "y" -> totalSeconds += value * 365 * 24 * 60 * 60L; // 1 year = 365 days
+                case "w" -> totalSeconds += value * 7 * 24 * 60 * 60L; // 1 week = 7 days
+                case "d" -> totalSeconds += value * 24 * 60 * 60L; // 1 day = 24 hours
+                case "h" -> totalSeconds += value * 60 * 60L; // 1 hour = 60 minutes
+                case "m" -> totalSeconds += value * 60L; // 1 minute = 60 seconds
+                case "s" -> totalSeconds += value; // seconds
+            }
+        }
+
+        // Check if the string is a direct number (only digits)
+        if (totalSeconds == 0 && timeString.matches("\\d+")) {
+            try {
+                return Math.max(-1, Long.parseLong(timeString));
+            } catch (Exception ignored) {
+                return -1;
+            }
+        }
+
+        return Math.max(-1, totalSeconds);
     }
 
     /**
@@ -375,22 +484,13 @@ public class Numbers {
                     } else {
                         x = parseFactor();
                     }
-                    switch (func) {
-                        case "sqrt":
-                            x = Math.sqrt(x);
-                            break;
-                        case "sin":
-                            x = Math.sin(Math.toRadians(x));
-                            break;
-                        case "cos":
-                            x = Math.cos(Math.toRadians(x));
-                            break;
-                        case "tan":
-                            x = Math.tan(Math.toRadians(x));
-                            break;
-                        default:
-                            throw new RuntimeException("Unknown function: " + func);
-                    }
+                    x = switch (func) {
+                        case "sqrt" -> Math.sqrt(x);
+                        case "sin" -> Math.sin(Math.toRadians(x));
+                        case "cos" -> Math.cos(Math.toRadians(x));
+                        case "tan" -> Math.tan(Math.toRadians(x));
+                        default -> throw new RuntimeException("Unknown function: " + func);
+                    };
                 } else {
                     throw new RuntimeException("Unexpected: " + (char)ch);
                 }

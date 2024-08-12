@@ -7,6 +7,7 @@ import com.github.mittenmc.serverutils.gui.pages.PagesMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ public class FileSystemMenu extends PagesMenu<Node> {
     private Node curr;
 
     public FileSystemMenu(String inventoryName, Node root) {
-        super(inventoryName);
+        super(new PagesMenuBuilder<>(inventoryName, 54));
         this.curr = root;
 
         addClickableItem(0, new ClickableItem<>(ColoredItems.RED.getGlass("&c<< Back")) {
@@ -59,10 +60,15 @@ public class FileSystemMenu extends PagesMenu<Node> {
     }
 
     @Override
-    public void onItemClick(InventoryClickEvent inventoryClickEvent, Player player, Node node) {
+    public void onItemClick(InventoryClickEvent inventoryClickEvent, Player player, @NotNull Node node) {
         if (node.isLeaf()) {
             ItemStack itemStack = node.getPlayerItem(player);
-            if (itemStack != null) player.getInventory().addItem(node.getPlayerItem(player));
+            if (itemStack != null) {
+                ItemStack playerItem = node.getPlayerItem(player);
+                if (playerItem != null) {
+                    player.getInventory().addItem(playerItem);
+                }
+            }
         }
         else {
             update(node);

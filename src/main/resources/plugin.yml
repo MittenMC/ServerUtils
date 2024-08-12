@@ -3,4 +3,14 @@ version: '${project.version}'
 api-version: 1.18
 main: com.github.mittenmc.serverutils.ServerUtils
 authors: [ GavvyDizzle ]
-description: Server utilities for MittenMC
+description: Server utilities for Spigot servers
+commands:
+  serverutils:
+    aliases: [sutils, su]
+    description: General purpose utility commands
+    permission: serverutils.utilcmd
+  exec:
+    aliases: [execc, execp]
+    description: Execute other commands with expansion support
+    permission: serverutils.exec
+    usage: exec <cmd> <args>

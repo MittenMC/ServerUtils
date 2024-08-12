@@ -1,5 +1,7 @@
 package com.github.mittenmc.serverutils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -8,80 +10,15 @@ import java.util.List;
 /**
  * Implementation for a SubCommand which represents a command unique in its first argument.
  * @author GavvyDizzle
- * @version 1.0.3
+ * @version 1.1.6
  * @since 1.0
  */
 public abstract class SubCommand implements Comparable<SubCommand> {
 
-    private String name, description, syntax, coloredSyntax, permission;
-
-    /**
-     * @return The name of the subcommand
-     * @since 1.0
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Change the name of this command
-     * @param name The new name
-     * @since 1.0.3
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return A short explanation of what this command does
-     * @since 1.0
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Change the description of this command
-     * @param description The new description
-     * @since 1.0.3
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * @return The command usage
-     * @since 1.0
-     */
-    public String getSyntax() {
-        return syntax;
-    }
-
-    /**
-     * Change the syntax of this command
-     * @param syntax The new syntax
-     * @since 1.0.3
-     */
-    public void setSyntax(String syntax) {
-        this.syntax = syntax;
-    }
-
-    /**
-     * @return The command usage with colors
-     * @since 1.0
-     */
-    public String getColoredSyntax() {
-        return coloredSyntax;
-    }
-
-    /**
-     * Change the colored syntax of this command
-     * @param coloredSyntax The new colored syntax
-     * @since 1.0.3
-     */
-    public void setColoredSyntax(String coloredSyntax) {
-        this.coloredSyntax = coloredSyntax;
-    }
+    @Getter @Setter
+    private String name, description, syntax, coloredSyntax;
+    private boolean supportsExpansions;
+    @Setter private String permission;
 
     /**
      * Checks this command's permission against the command sender.
@@ -93,15 +30,6 @@ public abstract class SubCommand implements Comparable<SubCommand> {
     public boolean hasPermission(CommandSender commandSender) {
         if (permission == null) return true;
         return commandSender.hasPermission(permission);
-    }
-
-    /**
-     * Change the permission of this command
-     * @param permission The new permission
-     * @since 1.0.3
-     */
-    public void setPermission(String permission) {
-        this.permission = permission;
     }
 
     /**
@@ -148,5 +76,21 @@ public abstract class SubCommand implements Comparable<SubCommand> {
     @Override
     public int compareTo(SubCommand o) {
         return getName().compareTo(o.getName());
+    }
+
+    /**
+     * @return If this command supports bash-like expansions
+     * @since 1.1.6
+     */
+    public boolean supportsExpansions() {
+        return supportsExpansions;
+    }
+
+    /**
+     * Enables bash-like expansions for this command
+     * @since 1.1.6
+     */
+    public void enableExpansions() {
+        supportsExpansions = true;
     }
 }

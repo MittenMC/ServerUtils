@@ -6,7 +6,7 @@ import java.util.Objects;
  * A generic Pair class
  *
  * @author GavvyDizzle
- * @version 1.0.4
+ * @version 1.0.11
  * @since 1.0.5
  */
 public final class Pair<A, B> {

@@ -22,71 +22,171 @@ import java.util.stream.IntStream;
 /**
  * An inventory implementation which displays contents across pages.
  * @author GavvyDizzle
- * @version 1.0.10
+ * @version 1.0.15
  * @since 1.0.8
  */
 @SuppressWarnings("unused")
-public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements ClickableMenu {
+public class PagesMenu<E extends Comparable<? super E> & ItemGenerator> implements ClickableMenu {
 
-    private String inventoryName;
-    private final int inventorySize = 54;
-    @Nullable private final Comparator<E> comparator;
+    @Setter private String inventoryName;
+    private final int inventorySize;
+    @Nullable private Comparator<E> comparator;
     private List<Integer> slots;
 
     private final HashMap<UUID, Integer> playerPages;
     private final List<E> itemList;
     private final Map<Integer, ClickableItem<?>> extraItemsMap;
 
-    @Setter private ItemStack pageRowFiller;
+    @Setter private ItemStack filler, pageRowFiller;
+    @Setter private boolean replaceEmptySlotsWithAir = false;
 
+    public static class PagesMenuBuilder<E extends Comparable<? super E> & ItemGenerator> {
+        //required
+        private final String inventoryName;
+        private final int inventorySize;
+
+        //optional
+        private Comparator<E> comparator = null;
+        private List<Integer> slots = null;
+        private ItemStack filler = null;
+        private ItemStack pageRowFiller = null;
+        private boolean replaceEmptySlotsWithAir = false;
+
+        public PagesMenuBuilder(String inventoryName, int rows) {
+            this.inventoryName = inventoryName;
+            this.inventorySize = Numbers.constrain(rows, 2, 6) * 9;
+        }
+
+        public PagesMenuBuilder<E> comparator(Comparator<E> comparator) {
+            this.comparator = comparator;
+            return this;
+        }
+
+        public PagesMenuBuilder<E> slots(List<Integer> slots) {
+            this.slots = slots;
+            return this;
+        }
+
+        public PagesMenuBuilder<E> filler(ItemStack filler) {
+            this.filler = filler;
+            return this;
+        }
+
+        public PagesMenuBuilder<E> pageRowFiller(ItemStack pageRowFiller) {
+            this.pageRowFiller = pageRowFiller;
+            return this;
+        }
+
+        public PagesMenuBuilder<E> replaceEmptySlotsWithAir(boolean b) {
+            this.replaceEmptySlotsWithAir = b;
+            return this;
+        }
+
+        public PagesMenu<E> build() {
+            return new PagesMenu<>(this);
+        }
+    }
+
+    /**
+     * Creates a new PagesMenu by using its builder.
+     * Only subclasses should call this constructor.
+     * Creating a menu on the fly should use {@link PagesMenuBuilder#build()}.
+     * @param builder The builder
+     */
+    public PagesMenu(PagesMenuBuilder<E> builder) {
+        this.inventoryName = Colors.conv(builder.inventoryName);
+        this.inventorySize = builder.inventorySize;
+        this.comparator = builder.comparator;
+        this.filler = builder.filler;
+        this.pageRowFiller = builder.pageRowFiller;
+        this.replaceEmptySlotsWithAir = builder.replaceEmptySlotsWithAir;
+
+        playerPages = new HashMap<>();
+        itemList = new ArrayList<>();
+        extraItemsMap = new HashMap<>();
+
+        // Must set slots after initializing extraItemsMap
+        setSlots(builder.slots != null ? builder.slots : IntStream.range(0, inventorySize-9).boxed().toList());
+
+        loadDefaultItems();
+    }
+
+    /**
+     * Creates a new pages menu
+     * @deprecated Use {@link PagesMenuBuilder} instead of constructors
+     */
+    @Deprecated
     public PagesMenu(String inventoryName) {
+        this.inventoryName = Colors.conv(inventoryName);
+        this.inventorySize = 54;
+
         playerPages = new HashMap<>();
         itemList = new ArrayList<>();
         extraItemsMap = new HashMap<>();
         comparator = null;
         setSlots(IntStream.rangeClosed(0, 44).boxed().toList());
 
-        this.inventoryName = Colors.conv(inventoryName);
         loadDefaultItems();
     }
 
+    /**
+     * Creates a new pages menu
+     * @deprecated Use {@link PagesMenuBuilder} instead of constructors
+     */
+    @Deprecated
     public PagesMenu(String inventoryName, @Nullable Comparator<E> comparator) {
+        this.inventoryName = Colors.conv(inventoryName);
+        this.inventorySize = 54;
+
         playerPages = new HashMap<>();
         itemList = new ArrayList<>();
         extraItemsMap = new HashMap<>();
         this.comparator = comparator;
         setSlots(IntStream.rangeClosed(0, 44).boxed().toList());
 
-        this.inventoryName = Colors.conv(inventoryName);
         loadDefaultItems();
     }
 
+    /**
+     * Creates a new pages menu
+     * @deprecated Use {@link PagesMenuBuilder} instead of constructors
+     */
+    @Deprecated
     public PagesMenu(String inventoryName, List<Integer> slots) {
+        this.inventoryName = Colors.conv(inventoryName);
+        this.inventorySize = 54;
+
         playerPages = new HashMap<>();
         itemList = new ArrayList<>();
         extraItemsMap = new HashMap<>();
         comparator = null;
         setSlots(slots);
 
-        this.inventoryName = Colors.conv(inventoryName);
         loadDefaultItems();
     }
 
+    /**
+     * Creates a new pages menu
+     * @deprecated Use {@link PagesMenuBuilder} instead of constructors
+     */
+    @Deprecated
     public PagesMenu(String inventoryName, List<Integer> slots, @Nullable Comparator<E> comparator) {
+        this.inventoryName = Colors.conv(inventoryName);
+        this.inventorySize = 54;
+
         playerPages = new HashMap<>();
         itemList = new ArrayList<>();
         extraItemsMap = new HashMap<>();
         this.comparator = comparator;
         setSlots(slots);
 
-        this.inventoryName = Colors.conv(inventoryName);
         loadDefaultItems();
     }
 
     private void loadDefaultItems() {
-        int pageDownSlot = 48;
-        int pageInfoSlot = 49;
-        int pageUpSlot = 50;
+        int pageDownSlot = inventorySize-6;
+        int pageInfoSlot = inventorySize-5;
+        int pageUpSlot = inventorySize-4;
 
         ItemStack pageInfoItem = new ItemStack(Material.PAPER);
         ItemMeta meta = pageInfoItem.getItemMeta();
@@ -148,6 +248,40 @@ public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements Click
             itemList.sort(comparator);
         } else {
             Collections.sort(itemList);
+        }
+    }
+
+    /**
+     * Set the sorting method for the item list.
+     * A null comparator will use {@link E}'s compareTo method
+     * @param comparator The new Comparator or null
+     */
+    public void updateSortingMethod(@Nullable Comparator<E> comparator) {
+        updateSortingMethod(comparator, true);
+    }
+
+    /**
+     * Set the sorting method for the item list.
+     * A null comparator will use {@link E}'s compareTo method
+     * @param comparator The new Comparator or null
+     * @param setToFirstPage If all viewers should have their page set to 1
+     */
+    public void updateSortingMethod(@Nullable Comparator<E> comparator, boolean setToFirstPage) {
+        this.comparator = comparator;
+        sortItems();
+
+        int oldMax = getMaxPage();
+        updateOpenInventories(oldMax);
+
+        for (Map.Entry<UUID, Integer> entry : playerPages.entrySet()) {
+            Player player = Bukkit.getPlayer(entry.getKey());
+            if (player == null) continue;
+
+            if (setToFirstPage) {
+                updatePage(player, 1);
+            } else {
+                updatePage(player);
+            }
         }
     }
 
@@ -241,6 +375,10 @@ public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements Click
     public void openInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(player, inventorySize, inventoryName);
 
+        for (int i = 0; i < inventorySize-9; i++) {
+            inventory.setItem(i, filler);
+        }
+
         for (int i = inventorySize-9; i < inventorySize; i++) {
             inventory.setItem(i, pageRowFiller);
         }
@@ -289,7 +427,7 @@ public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements Click
      */
     public void onPageDown(Player player) {
         playerPages.put(player.getUniqueId(), playerPages.get(player.getUniqueId()) - 1);
-        updatePage(player);
+        updatePage(player, playerPages.get(player.getUniqueId()) - 1);
     }
 
     /**
@@ -309,8 +447,19 @@ public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements Click
      * @param player The player's inventory to update
      */
     private void updatePage(Player player) {
+        updatePage(player, playerPages.get(player.getUniqueId()));
+    }
+
+    /**
+     * Sets the contents of this page and updates the page info item
+     * @param player The player's inventory to update
+     * @param page The page to open
+     */
+    private void updatePage(Player player, int page) {
+        page = Numbers.constrain(page, 1, getMaxPage());
+        playerPages.put(player.getUniqueId(), page);
+
         Inventory inventory = player.getOpenInventory().getTopInventory();
-        int page = playerPages.get(player.getUniqueId());
 
         for (int slot : slots) {
             inventory.setItem(slot, onItemClear(slot));
@@ -329,14 +478,22 @@ public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements Click
     }
 
     /**
+     * Forces a refresh of the player's current page contents.
+     * @param player The player
+     */
+    public void refresh(Player player) {
+        updatePage(player);
+    }
+
+    /**
      * Called when an item is removed from the inventory.
-     * By default, a null value is returned.
+     * By default, a null value or the filler is returned.
      * @param slot The item slot
      * @return The resulting ItemStack
      */
     @Nullable
     public ItemStack onItemClear(int slot) {
-        return null;
+        return replaceEmptySlotsWithAir ? null : filler;
     }
 
     /**
@@ -391,9 +548,5 @@ public class PagesMenu<E extends Comparable<E> & ItemGenerator> implements Click
         if (!Numbers.isWithinRange(index, 0, itemList.size()-1)) return null;
 
         return itemList.get(index);
-    }
-
-    public void setInventoryName(String inventoryName) {
-        this.inventoryName = Colors.conv(inventoryName);
     }
 }

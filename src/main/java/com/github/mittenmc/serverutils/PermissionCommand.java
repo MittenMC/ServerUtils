@@ -1,7 +1,5 @@
 package com.github.mittenmc.serverutils;
 
-import org.bukkit.command.CommandSender;
-
 /**
  * Command interface which requires the command to have a permission
  * @author GavvyDizzle
@@ -12,5 +10,5 @@ import org.bukkit.command.CommandSender;
 public interface PermissionCommand {
 
     @Deprecated
-    abstract String getPermission();
+    String getPermission();
 }

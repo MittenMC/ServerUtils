@@ -1,7 +1,6 @@
 package com.github.mittenmc.serverutils.loottable.entries;
 
 import com.github.mittenmc.serverutils.loottable.LootTableEntry;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * A loot table entry that gives itself.

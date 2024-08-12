@@ -11,9 +11,10 @@ import java.util.Map;
 /**
  * Contains useful methods for editing an item's ItemMeta
  * @author GavvyDizzle
- * @version 1.0.3
+ * @version 1.0.13
  * @since 1.0.3
  */
+@SuppressWarnings("unused")
 public class ItemStackUtils {
 
     /**
@@ -82,6 +83,21 @@ public class ItemStackUtils {
             lore.set(i, line);
         }
         meta.setLore(lore);
+        itemStack.setItemMeta(meta);
+    }
+
+    /**
+     * Converts any color codes in the item's name and lore.
+     * @param itemStack The item to color
+     */
+    public static void colorNameAndLore(@NotNull ItemStack itemStack) {
+        if (!itemStack.hasItemMeta()) return;
+
+        ItemMeta meta = itemStack.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(Colors.conv(meta.getDisplayName()));
+        meta.setLore(Colors.conv(meta.getLore()));
+
         itemStack.setItemMeta(meta);
     }
 

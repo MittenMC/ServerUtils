@@ -20,7 +20,6 @@
 package com.github.mittenmc.serverutils;
 
 import lombok.Cleanup;
-import org.apache.commons.lang.SerializationException;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -42,17 +41,17 @@ public class ItemStackSerializer {
      * Converts an ItemStack to a byte array
      * @param item The ItemStack
      * @return The byte array representing this item
-     * @throws SerializationException Thrown when serialization fails
+     * @throws RuntimeException Thrown when serialization fails
      * @since 1.0
      */
-    public static byte[] serializeItemStack(ItemStack item) throws SerializationException {
+    public static byte[] serializeItemStack(ItemStack item) throws RuntimeException {
         try {
             @Cleanup ByteArrayOutputStream os = new ByteArrayOutputStream();
             @Cleanup BukkitObjectOutputStream bos = new BukkitObjectOutputStream(os);
             bos.writeObject(item);
             return os.toByteArray();
         } catch (IOException ex) {
-            throw new SerializationException(ex);
+            throw new RuntimeException(ex);
         }
     }
 
@@ -60,10 +59,10 @@ public class ItemStackSerializer {
      * Converts an array of ItemStacks to a byte array
      * @param items The ItemStack list
      * @return The byte array representing the array consisting of the size then the items, or null if the input is null
-     * @throws SerializationException Thrown when serialization fails
+     * @throws RuntimeException Thrown when serialization fails
      * @since 1.0.2
      */
-    public static byte[] serializeItemStackArray(@Nullable ItemStack[] items) throws SerializationException {
+    public static byte[] serializeItemStackArray(@Nullable ItemStack[] items) throws RuntimeException {
         if (items == null) return null;
 
         try {
@@ -80,7 +79,7 @@ public class ItemStackSerializer {
 
             return os.toByteArray();
         } catch (Exception ex) {
-            throw new SerializationException(ex);
+            throw new RuntimeException(ex);
         }
     }
 
@@ -88,16 +87,16 @@ public class ItemStackSerializer {
      * Converts a byte array to an ItemStack.
      * @param b The byte array
      * @return The ItemStack representing this byte array
-     * @throws SerializationException Thrown when serialization fails
+     * @throws RuntimeException Thrown when serialization fails
      * @since 1.0
      */
-    public static ItemStack deserializeItemStack(byte[] b) throws SerializationException {
+    public static ItemStack deserializeItemStack(byte[] b) throws RuntimeException {
         try {
             @Cleanup ByteArrayInputStream bais = new ByteArrayInputStream(b);
             @Cleanup BukkitObjectInputStream bois = new BukkitObjectInputStream(bais);
             return (ItemStack) bois.readObject();
         } catch (Exception ex) {
-            throw new SerializationException(new String(b), ex);
+            throw new RuntimeException(new String(b), ex);
         }
     }
 
@@ -105,11 +104,11 @@ public class ItemStackSerializer {
      * Converts a byte array to an array of ItemStacks.
      * @param b The byte array consisting of the size then the items
      * @return The ItemStack array representing this byte array, or null if the input is null
-     * @throws SerializationException Thrown when serialization fails
+     * @throws RuntimeException Thrown when serialization fails
      * @since 1.0.2
      */
     @Nullable
-    public static ItemStack[] deserializeItemStackArray(byte[] b) throws SerializationException {
+    public static ItemStack[] deserializeItemStackArray(byte[] b) throws RuntimeException {
         if (b == null) return null;
 
         try {
@@ -126,7 +125,7 @@ public class ItemStackSerializer {
 
             return items;
         } catch (IOException | ClassNotFoundException ex) {
-            throw new SerializationException(new String(b), ex);
+            throw new RuntimeException(new String(b), ex);
         }
     }
 }

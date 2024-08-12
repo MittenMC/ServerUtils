@@ -31,7 +31,7 @@ public class PlayerHeads {
                 .build(
                         new CacheLoader<UUID, ItemStack>() {
                             @Override
-                            public ItemStack load(@Nonnull UUID uuid) {
+                            public @NotNull ItemStack load(@Nonnull UUID uuid) {
                                 ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
                                 SkullMeta sm = (SkullMeta) skull.getItemMeta();
                                 assert sm != null;
