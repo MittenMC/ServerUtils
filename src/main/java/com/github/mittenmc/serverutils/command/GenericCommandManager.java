@@ -17,11 +17,7 @@ public class GenericCommandManager extends CommandManager {
     public GenericCommandManager(PluginCommand command) {
         super(command);
 
-        registerCommand(new HelpCommand.HelpCommandBuilder(this)
-                .commandsPerPage(2)
-                .lineSpacerFormatting("&b&m")
-                .targetWidth(50)
-                .build());
+        registerCommand(new HelpCommand.HelpCommandBuilder(this).build());
         registerCommand(new MessageCommand(this));
         registerCommand(new SoundCommand(this));
         registerCommand(new TitleCommand(this));
