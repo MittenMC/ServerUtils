@@ -74,9 +74,25 @@ public abstract class PlayerDataContainer<E extends PlayerProfile> implements Li
      * This will initiate a {@link #loadPlayerData(Player)} for each online player.
      */
     public void initializeOnlinePlayers() {
-        for (Player player : instance.getServer().getOnlinePlayers()) {
-            loadPlayerData(player);
-        }
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(instance, () -> {
+            List<E> playerData = new ArrayList<>();
+
+            for (Player player : instance.getServer().getOnlinePlayers()) {
+                E newPlayerData = loadPlayerData(player);
+                if (newPlayerData == null) {
+                    instance.getLogger().log(Level.SEVERE, "Failed to load online player data ("  + playerData.size() + "/" + Bukkit.getOnlinePlayers().size() + " have been loaded)");
+                    break;
+                }
+                playerData.add(newPlayerData);
+            }
+
+            // Add to the map synchronously to avoid any potential issues
+            Bukkit.getServer().getScheduler().runTask(instance, () -> {
+                for (E data : playerData) {
+                    players.put(data.getUniqueId(), data);
+                }
+            });
+        });
     }
 
     @EventHandler
