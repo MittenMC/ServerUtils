@@ -91,6 +91,10 @@ public class ExecCommand implements TabExecutor {
 
         if (execArgs.startsWith("/")) execArgs = execArgs.substring(1);
 
-        return Bukkit.getServer().getCommandMap().tabComplete(sender, execArgs);
+        // Start matching once one character is present
+        if (!execArgs.isEmpty()) {
+            return Bukkit.getServer().getCommandMap().tabComplete(sender, execArgs);
+        }
+        return Collections.emptyList();
     }
 }
